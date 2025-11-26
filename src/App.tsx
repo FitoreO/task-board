@@ -1,0 +1,196 @@
+import { useEffect, useState } from "react";
+import { Box, IconButton, Paper, Typography } from "@mui/material";
+import AddList from "./components/AddList";
+import AddIcon from "@mui/icons-material/Add";
+import { deleteList } from "./components/utils/deleteList";
+import { deleteTask } from "./components/utils/deleteTask";
+import { moveTask } from "./components/utils/moveTask";
+import LoginForm from "./components/LoginForm";
+import ListModal from "./components/ListModal";
+
+const flexColumn = {
+  display: "flex",
+  flexDirection: "column",
+};
+
+export type Task = { id: number; name?: string; description?: string };
+
+function App() {
+  const [lists, setLists] = useState<
+    { id: number; tasks: Task[]; name?: string }[]
+  >([]);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    return !!sessionStorage.getItem("user"); // keep user logged in during entire session
+  });
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      const user = JSON.parse(sessionStorage.getItem("user")!);
+      fetch(`http://localhost:3000/lists/${user.id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setLists(data);
+        })
+        .catch((err) => console.error("Failed to load lists:", err));
+    }
+  }, [isLoggedIn]);
+
+  const addListHandler = async (name: string) => {
+    const user = JSON.parse(sessionStorage.getItem("user")!);
+    if (!user) return;
+
+    try {
+      const res = await fetch("http://localhost:3000/lists", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, userId: user.id }),
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error);
+      }
+
+      const newList = await res.json();
+      setLists((prev) => [...prev, { ...newList, tasks: [] }]);
+      setIsModalOpen(false);
+    } catch (err) {
+      console.error("Failed to add list:", err);
+    }
+  };
+
+  const deleteListHandler = (id: number) =>
+    setLists((prev) => deleteList(prev, id));
+  const addTaskHandler = async (
+    listId: number,
+    name: string,
+    description?: string
+  ) => {
+    try {
+      const res = await fetch("http://localhost:3000/tasks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, description, listId }),
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error);
+      }
+
+      const newTask = await res.json();
+
+      // Update local state with the new task
+      setLists((prev) =>
+        prev.map((list) =>
+          list.id === listId
+            ? { ...list, tasks: [...list.tasks, newTask] }
+            : list
+        )
+      );
+    } catch (err) {
+      console.error("Failed to add task:", err);
+    }
+  };
+
+  const deleteTaskHandler = (listId: number, taskId: number) =>
+    setLists((prev) => deleteTask(prev, listId, taskId));
+  const updateTaskHandler = (
+    listId: number,
+    taskId: number,
+    newName: string,
+    newDescription: string
+  ) => {
+    setLists((prev) =>
+      prev.map((list) =>
+        list.id === listId
+          ? {
+              ...list,
+              tasks: list.tasks.map((task) =>
+                task.id === taskId
+                  ? { ...task, name: newName, description: newDescription }
+                  : task
+              ),
+            }
+          : list
+      )
+    );
+  };
+
+  const moveTaskHandler = (
+    taskId: number,
+    sourceListId: number,
+    targetListId: number,
+    targetIndex?: number
+  ) => {
+    setLists((prev) =>
+      moveTask(prev, taskId, sourceListId, targetListId, targetIndex)
+    );
+  };
+
+  return isLoggedIn ? (
+    <Box
+      sx={{
+        "& > :not(style)": { marginLeft: "auto", marginRight: "auto" },
+      }}
+    >
+      <Paper
+        elevation={5}
+        sx={{
+          width: 1250,
+          height: 600,
+          marginTop: "30px",
+          ...flexColumn,
+          padding: 3,
+        }}
+      >
+        {lists.length > 0 ? (
+          <IconButton
+            sx={{ marginLeft: "auto" }}
+            onClick={() => setIsModalOpen(true)}
+          >
+            <AddIcon sx={{ width: "30px", height: "30px" }} />
+          </IconButton>
+        ) : (
+          <Box
+            sx={{
+              margin: "auto",
+              ...flexColumn,
+              alignItems: "center",
+            }}
+          >
+            <Typography sx={{ mb: 1, fontSize: "26px" }}>
+              Add a new list
+            </Typography>
+            <IconButton onClick={() => setIsModalOpen(true)}>
+              <AddIcon sx={{ width: "50px", height: "50px" }} />
+            </IconButton>
+          </Box>
+        )}
+        <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
+          {lists.map((list) => (
+            <AddList
+              key={list.id}
+              list={list}
+              moveTask={moveTaskHandler}
+              addTask={addTaskHandler}
+              deleteTask={deleteTaskHandler}
+              deleteList={deleteListHandler}
+              updateTask={updateTaskHandler}
+            />
+          ))}
+        </Box>
+        <ListModal
+          open={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSubmit={addListHandler}
+        />
+      </Paper>
+    </Box>
+  ) : (
+    <LoginForm onLoginSuccess={() => setIsLoggedIn(true)} />
+  );
+}
+export default App;
