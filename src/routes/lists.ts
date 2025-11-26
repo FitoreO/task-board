@@ -3,7 +3,6 @@ import { prisma } from "../lib/prisma";
 
 const router = Router();
 
-// Get all lists for a user
 router.get("/:userId", async (req, res) => {
   const userId = parseInt(req.params.userId, 10);
   try {
@@ -17,7 +16,6 @@ router.get("/:userId", async (req, res) => {
   }
 });
 
-// Create a new list for a user
 router.post("/", async (req, res) => {
   const { name, userId } = req.body;
   try {
@@ -25,6 +23,18 @@ router.post("/", async (req, res) => {
       data: { name, userId },
     });
     res.json(list);
+  } catch (error: any) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  try {
+    //an empty list can be deleted but when a task is added it will not allow you to delete list until task is deleted first
+    await prisma.task.deleteMany({ where: { listId: id } });
+    await prisma.list.delete({ where: { id } });
+    res.json({ message: "List and tasks deleted" });
   } catch (error: any) {
     res.status(400).json({ error: error.message });
   }

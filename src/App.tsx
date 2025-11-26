@@ -2,9 +2,7 @@ import { useEffect, useState } from "react";
 import { Box, IconButton, Paper, Typography } from "@mui/material";
 import AddList from "./components/AddList";
 import AddIcon from "@mui/icons-material/Add";
-import { deleteList } from "./components/utils/deleteList";
-import { deleteTask } from "./components/utils/deleteTask";
-import { moveTask } from "./components/utils/moveTask";
+
 import LoginForm from "./components/LoginForm";
 import ListModal from "./components/ListModal";
 
@@ -61,8 +59,20 @@ function App() {
     }
   };
 
-  const deleteListHandler = (id: number) =>
-    setLists((prev) => deleteList(prev, id));
+  const deleteListHandler = async (id: number) => {
+    try {
+      const res = await fetch(`http://localhost:3000/lists/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) throw new Error("Failed to delete list");
+
+      setLists((prev) => prev.filter((list) => list.id !== id));
+    } catch (err) {
+      console.error("Failed to delete list:", err);
+    }
+  };
+
   const addTaskHandler = async (
     listId: number,
     name: string,
@@ -82,7 +92,6 @@ function App() {
 
       const newTask = await res.json();
 
-      // Update local state with the new task
       setLists((prev) =>
         prev.map((list) =>
           list.id === listId
@@ -95,38 +104,87 @@ function App() {
     }
   };
 
-  const deleteTaskHandler = (listId: number, taskId: number) =>
-    setLists((prev) => deleteTask(prev, listId, taskId));
-  const updateTaskHandler = (
+  const updateTaskHandler = async (
     listId: number,
     taskId: number,
     newName: string,
     newDescription: string
   ) => {
-    setLists((prev) =>
-      prev.map((list) =>
-        list.id === listId
-          ? {
-              ...list,
-              tasks: list.tasks.map((task) =>
-                task.id === taskId
-                  ? { ...task, name: newName, description: newDescription }
-                  : task
-              ),
-            }
-          : list
-      )
-    );
+    try {
+      const res = await fetch(`http://localhost:3000/tasks/${taskId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: newName, description: newDescription }),
+      });
+
+      if (!res.ok) throw new Error("Failed to update task");
+      const updatedTask = await res.json();
+
+      setLists((prev) =>
+        prev.map((list) =>
+          list.id === listId
+            ? {
+                ...list,
+                tasks: list.tasks.map((task) =>
+                  task.id === taskId ? updatedTask : task
+                ),
+              }
+            : list
+        )
+      );
+    } catch (err) {
+      console.error("Failed to update task:", err);
+    }
   };
 
-  const moveTaskHandler = (
+  const deleteTaskHandler = async (listId: number, taskId: number) => {
+    try {
+      const res = await fetch(`http://localhost:3000/tasks/${taskId}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) throw new Error("Failed to delete task");
+
+      setLists((prev) =>
+        prev.map((list) =>
+          list.id === listId
+            ? { ...list, tasks: list.tasks.filter((t) => t.id !== taskId) }
+            : list
+        )
+      );
+    } catch (err) {
+      console.error("Failed to delete task:", err);
+    }
+  };
+
+  const moveTaskHandler = async (
     taskId: number,
     sourceListId: number,
     targetListId: number,
     targetIndex?: number
   ) => {
+    const res = await fetch(`http://localhost:3000/tasks/${taskId}/move`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ targetListId, targetIndex }),
+    });
+
+    if (!res.ok) throw new Error("Failed to move task");
+    const updatedTask = await res.json();
+
     setLists((prev) =>
-      moveTask(prev, taskId, sourceListId, targetListId, targetIndex)
+      prev.map((list) => {
+        if (list.id === sourceListId) {
+          return { ...list, tasks: list.tasks.filter((t) => t.id !== taskId) };
+        }
+        if (list.id === targetListId) {
+          const insertAt = targetIndex ?? list.tasks.length;
+          const newTasks = [...list.tasks];
+          newTasks.splice(insertAt, 0, updatedTask);
+          return { ...list, tasks: newTasks };
+        }
+        return list;
+      })
     );
   };
 
