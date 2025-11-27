@@ -15,7 +15,7 @@ type AddTaskProps = {
     listId: number,
     taskId: number,
     newName: string,
-    newDescription: string
+    newDescription: string,
   ) => void;
   name?: string;
   description?: string;

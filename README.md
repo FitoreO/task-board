@@ -1,46 +1,128 @@
-# Getting Started with Create React App
+# Task Board
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Task management application built with React, Express, and Prisma.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- User authentication with login
+- CRUD operations for lists and tasks
+- Drag-and-drop tasks between lists
+- Task descriptions and details
 
-### `npm start`
+## Tech Stack
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Frontend
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- **React 19**
+- **Vite**
+- **Material UI (MUI)**
+- **React DnD**
 
-### `npm test`
+### Backend
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **Express**
+- **Prisma**
+- **SQLite**
 
-### `npm run build`
+## Installation
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. Clone the repository and install dependencies:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```bash
+npm install
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+2. Setup .env file:
 
-### `npm run eject`
+```
+DATABASE_URL="file:./dev.db"
+CLIENT_PORT=5173
+SERVER_PORT=3000
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+3. Initialize the prisma client:
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+npm run prisma:generate
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## Running the Project
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### Development Mode (Frontend + Backend)
 
-## Learn More
+Start both the Vite dev server and Express backend:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```bash
+npm run serve
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+This runs two processes:
+
+- Frontend: `http://localhost:5173`
+- Backend: `http://localhost:3000`
+
+### Frontend Only
+
+```bash
+npm run dev
+```
+
+Runs on `http://localhost:5173`
+
+### Backend Only
+
+```bash
+npm run dev:server
+```
+
+Runs on `http://localhost:3000`
+
+### Production Build
+
+```bash
+npm run build
+```
+
+Creates optimized production build in `dist/` folder
+
+### Preview Production Build
+
+```bash
+npm run preview
+```
+
+## NPM Scripts Summary
+
+| Command                   | Purpose                               |
+| ------------------------- | ------------------------------------- |
+| `npm run dev`             | Start Vite dev server (frontend only) |
+| `npm run dev:server`      | Start Express server (backend only)   |
+| `npm run serve`           | Start both frontend and backend       |
+| `npm run build`           | Build for production                  |
+| `npm run preview`         | Preview production build              |
+| `npm run format`          | Format code using Prettier            |
+| `npm run prisma:generate` | Generate Prisma client                |
+
+## Project Structure
+
+```
+src/               # React frontend
+  components/      # React components
+  App.tsx          # Main app component
+  main.tsx         # Entry point
+
+server/            # Express backend
+  routes/          # API route handlers
+  index.ts         # Server entry point
+  prisma.ts        # Prisma client setup
+
+prisma/
+  schema.prisma    # Database schema
+  migrations/      # Database migrations
+```
+
+## Database Schema
+
+- **User** - Authentication and user data
+- **List** - Task lists belonging to users
+- **Task** - Individual tasks within lists

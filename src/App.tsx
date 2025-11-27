@@ -76,7 +76,7 @@ function App() {
   const addTaskHandler = async (
     listId: number,
     name: string,
-    description?: string
+    description?: string,
   ) => {
     try {
       const res = await fetch("http://localhost:3000/tasks", {
@@ -96,8 +96,8 @@ function App() {
         prev.map((list) =>
           list.id === listId
             ? { ...list, tasks: [...list.tasks, newTask] }
-            : list
-        )
+            : list,
+        ),
       );
     } catch (err) {
       console.error("Failed to add task:", err);
@@ -108,7 +108,7 @@ function App() {
     listId: number,
     taskId: number,
     newName: string,
-    newDescription: string
+    newDescription: string,
   ) => {
     try {
       const res = await fetch(`http://localhost:3000/tasks/${taskId}`, {
@@ -126,11 +126,11 @@ function App() {
             ? {
                 ...list,
                 tasks: list.tasks.map((task) =>
-                  task.id === taskId ? updatedTask : task
+                  task.id === taskId ? updatedTask : task,
                 ),
               }
-            : list
-        )
+            : list,
+        ),
       );
     } catch (err) {
       console.error("Failed to update task:", err);
@@ -149,8 +149,8 @@ function App() {
         prev.map((list) =>
           list.id === listId
             ? { ...list, tasks: list.tasks.filter((t) => t.id !== taskId) }
-            : list
-        )
+            : list,
+        ),
       );
     } catch (err) {
       console.error("Failed to delete task:", err);
@@ -161,7 +161,7 @@ function App() {
     taskId: number,
     sourceListId: number,
     targetListId: number,
-    targetIndex?: number
+    targetIndex?: number,
   ) => {
     const res = await fetch(`http://localhost:3000/tasks/${taskId}/move`, {
       method: "PUT",
@@ -184,7 +184,7 @@ function App() {
           return { ...list, tasks: newTasks };
         }
         return list;
-      })
+      }),
     );
   };
 

@@ -14,7 +14,7 @@ type AddListProps = {
   moveTask: (
     taskId: number,
     sourceListId: number,
-    targetListId: number
+    targetListId: number,
   ) => void;
   addTask: (listId: number, name: string, description?: string) => void;
   deleteTask: (listId: number, taskId: number) => void;
@@ -23,7 +23,7 @@ type AddListProps = {
     listId: number,
     taskId: number,
     newName: string,
-    newDescription: string
+    newDescription: string,
   ) => void;
 };
 
