@@ -11,7 +11,11 @@ const flexColumn = {
   flexDirection: "column",
 };
 
-export type Task = { id: number; name?: string; description?: string };
+export type Task = {
+  id: number;
+  name?: string;
+  description?: string;
+};
 
 function App() {
   const [lists, setLists] = useState<

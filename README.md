@@ -26,7 +26,7 @@ Task management application built with React, Express, and Prisma.
 
 ## Installation
 
-1. Clone the repository and install dependencies:
+1. Install dependencies:
 
 ```bash
 npm install
