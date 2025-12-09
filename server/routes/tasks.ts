@@ -39,6 +39,7 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// Move a task to another list by updating it's listId
 router.put("/:id/move", async (req, res) => {
   const id = parseInt(req.params.id, 10);
   const { targetListId } = req.body;
@@ -52,6 +53,8 @@ router.put("/:id/move", async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 });
+
+// Fetch tasks, optionally filtered by type and/or priority
 
 router.get("/", async (req, res) => {
   const { type, priority } = req.query;

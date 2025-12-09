@@ -34,6 +34,8 @@ function AddList({
   priorities,
 }: AddListProps) {
   const [isTaskModalOpen, setIsTaskModalOpen] = useState<boolean>(false);
+
+  // Lets you drag tasks from other lists and drop them here
   const [, drop] = useDrop(() => ({
     accept: ItemTypes.BOARDTASK,
     drop: (item: { id: number; sourceListId: number }) => {

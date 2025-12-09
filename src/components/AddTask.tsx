@@ -22,12 +22,14 @@ function AddTask({
   taskTypes,
   priorities,
 }: AddTaskProps) {
+  //makes task draggable between lists
   const { isDragging, drag } = useBoardDrag(ItemTypes.BOARDTASK, {
     id,
     sourceListId,
   });
   const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
 
+  // Give each priority level a color so it's easy to spot
   const priorityColors: Record<string, string> = {
     Critical: "#ff4d4d",
     High: "#ff9800",

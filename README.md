@@ -8,6 +8,8 @@ Task management application built with React, Express, and Prisma.
 - CRUD operations for lists and tasks
 - Drag-and-drop tasks between lists
 - Task descriptions and details
+- Autosorting based on priority level
+- Ability to filter tasks by type and/or priority
 
 ## Tech Stack
 

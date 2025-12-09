@@ -27,8 +27,10 @@ function App() {
   const [lists, setLists] = useState<TaskList[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
+  // Keeping login info in sessionStorage so it sticks while the tab is open.
+  // Temporary solution until a proper logout flow is implemented.
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    return !!sessionStorage.getItem("user"); // keep user logged in during entire session
+    return !!sessionStorage.getItem("user");
   });
   const [taskTypes, setTaskTypes] = useState<string[]>([]);
   const [priorities, setPriorities] = useState<string[]>([]);
@@ -36,9 +38,11 @@ function App() {
   const [selectedType, setSelectedType] = useState<string>("");
   const [selectedPriority, setSelectedPriority] = useState<string>("");
 
+  const user = JSON.parse(sessionStorage.getItem("user")!);
+
   useEffect(() => {
     if (isLoggedIn) {
-      const user = JSON.parse(sessionStorage.getItem("user")!);
+      // Fetch all lists for the logged-in user from backend
       fetch(`http://localhost:3000/lists/${user.id}`)
         .then((res) => res.json())
         .then((data) => {
@@ -63,7 +67,6 @@ function App() {
   }, []);
 
   const addListHandler = async (name: string) => {
-    const user = JSON.parse(sessionStorage.getItem("user")!);
     if (!user) return;
 
     try {

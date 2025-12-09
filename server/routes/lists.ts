@@ -3,6 +3,8 @@ import { prisma } from "../prisma";
 
 const router = Router();
 
+// Get all lists for a user, including their tasks
+
 router.get("/:userId", async (req, res) => {
   const userId = parseInt(req.params.userId, 10);
   try {
