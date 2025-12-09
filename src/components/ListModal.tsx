@@ -1,27 +1,9 @@
 import { Box, Button, Typography, Modal, TextField } from "@mui/material";
 import { useState } from "react";
+import { type ListModalType } from "../types/list.types";
+import { StyledModalBox } from "./StyledModalBox";
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
-
-export default function ListModal({
-  open,
-  onClose,
-  onSubmit,
-}: {
-  open: boolean;
-  onClose: () => void;
-  onSubmit: (name: string) => void;
-}) {
+export default function ListModal({ open, onClose, onSubmit }: ListModalType) {
   const [name, setName] = useState<string>("");
   const [errorText, setErrorText] = useState<string>("");
 
@@ -37,7 +19,7 @@ export default function ListModal({
 
   return (
     <Modal open={open} onClose={onClose}>
-      <Box sx={style}>
+      <StyledModalBox>
         <Typography variant="h6">Create a list</Typography>
         <TextField
           placeholder="Name"
@@ -55,7 +37,7 @@ export default function ListModal({
         <Button variant="contained" onClick={handleSubmit} fullWidth>
           Submit
         </Button>
-      </Box>
+      </StyledModalBox>
     </Modal>
   );
 }

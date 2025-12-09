@@ -43,7 +43,7 @@ model Task {
   name        String?
   description String?
   listId      Int
-  list        List    @relation(fields: [listId], references: [id])
+  list        List    @relation(fields: [listId], references: [id],  onDelete: Cascade)
   type        TaskType?
   priority    Priority?
 }

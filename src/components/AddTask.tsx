@@ -5,24 +5,10 @@ import { useBoardDrag } from "./hooks/useBoardDrag";
 import UpdateTaskModal from "./UpdateTaskModal";
 import { useState } from "react";
 import { singleLineEllipsis } from "./AddList";
+import { type AddTaskProps } from "../types/task.types";
+import { flexColumn } from "../App";
 
 export const ItemTypes = { BOARDTASK: "boardtask" };
-
-type AddTaskProps = {
-  id: number;
-  sourceListId: number;
-  deleteTask: (listId: number, taskId: number) => void;
-  updateTask: (
-    listId: number,
-    taskId: number,
-    newName: string,
-    newDescription: string,
-  ) => void;
-  name?: string;
-  description?: string;
-  type?: string;
-  priority?: string;
-};
 
 function AddTask({
   id,
@@ -33,12 +19,14 @@ function AddTask({
   description,
   type,
   priority,
+  taskTypes,
+  priorities,
 }: AddTaskProps) {
   const { isDragging, drag } = useBoardDrag(ItemTypes.BOARDTASK, {
     id,
     sourceListId,
   });
-  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
 
   const priorityColors: Record<string, string> = {
     Critical: "#ff4d4d",
@@ -56,8 +44,7 @@ function AddTask({
           height: 80,
           mt: 1,
           mx: "auto",
-          display: "flex",
-          flexDirection: "column",
+          ...flexColumn,
           p: 1,
           backgroundColor: isDragging ? "#dbd7cfff" : "#fff",
         }}
@@ -77,6 +64,7 @@ function AddTask({
                 width: 10,
                 height: 10,
                 borderRadius: "2px",
+                marginRight: "5px",
                 backgroundColor: priority
                   ? priorityColors[priority]
                   : "transparent",
@@ -121,11 +109,22 @@ function AddTask({
         open={isEditOpen}
         initialName={name}
         initialDescription={description}
+        initialTaskType={type}
+        initialPriority={priority}
         onClose={() => setIsEditOpen(false)}
-        onSubmit={(newName: string, newDescription: string) => {
-          updateTask(sourceListId, id, newName, newDescription);
+        onSubmit={(newName, newDescription, newType, newPriority) => {
+          updateTask(
+            sourceListId,
+            id,
+            newName,
+            newDescription,
+            newType,
+            newPriority,
+          );
           setIsEditOpen(false);
         }}
+        taskTypes={taskTypes}
+        priorities={priorities}
       />
     </div>
   );

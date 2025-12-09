@@ -9,11 +9,11 @@ import {
 } from "@mui/material";
 import AddList from "./components/AddList";
 import AddIcon from "@mui/icons-material/Add";
-
 import LoginForm from "./components/LoginForm";
 import ListModal from "./components/ListModal";
+import { type TaskList } from "./types/task.types";
 
-const flexColumn = {
+export const flexColumn = {
   display: "flex",
   flexDirection: "column",
 };
@@ -23,18 +23,8 @@ const flexRow = {
   flexDirection: "row",
 };
 
-export type Task = {
-  id: number;
-  name?: string;
-  description?: string;
-  type?: string;
-  priority?: string;
-};
-
 function App() {
-  const [lists, setLists] = useState<
-    { id: number; tasks: Task[]; name?: string }[]
-  >([]);
+  const [lists, setLists] = useState<TaskList[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
@@ -57,6 +47,8 @@ function App() {
         .catch((err) => console.error("Failed to load lists:", err));
     }
   }, [isLoggedIn]);
+
+  // Load dropdown options for task type and priority filters
 
   useEffect(() => {
     fetch("http://localhost:3000/task-types")
@@ -146,12 +138,19 @@ function App() {
     taskId: number,
     newName: string,
     newDescription: string,
+    newType?: string,
+    newPriority?: string,
   ) => {
     try {
       const res = await fetch(`http://localhost:3000/tasks/${taskId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: newName, description: newDescription }),
+        body: JSON.stringify({
+          name: newName,
+          description: newDescription,
+          type: newType,
+          priority: newPriority,
+        }),
       });
 
       if (!res.ok) throw new Error("Failed to update task");
@@ -225,6 +224,8 @@ function App() {
     );
   };
 
+  const hasTasks = lists.some((list) => list.tasks.length > 0);
+
   return isLoggedIn ? (
     <Box
       sx={{
@@ -241,40 +242,48 @@ function App() {
           padding: 3,
         }}
       >
-        <Box
-          sx={{
-            ...flexRow,
-            marginLeft: "auto",
-            marginRight: "auto",
-            gap: 2,
-          }}
-        >
-          <Select
-            value={selectedType}
-            onChange={(e) => setSelectedType(e.target.value)}
-            sx={{ width: "300px" }}
+        {hasTasks && (
+          <Box
+            sx={{
+              ...flexRow,
+              marginLeft: "auto",
+              marginRight: "auto",
+              gap: 2,
+            }}
           >
-            <MenuItem value="">All types</MenuItem>
-            {taskTypes.map((t) => (
-              <MenuItem key={t} value={t}>
-                {t}
+            <Select
+              value={selectedType}
+              onChange={(e) => setSelectedType(e.target.value)}
+              sx={{ width: "300px" }}
+              displayEmpty
+            >
+              <MenuItem value="">
+                <em>Select a task</em>
               </MenuItem>
-            ))}
-          </Select>
+              {taskTypes.map((t) => (
+                <MenuItem key={t} value={t}>
+                  {t}
+                </MenuItem>
+              ))}
+            </Select>
 
-          <Select
-            value={selectedPriority}
-            onChange={(e) => setSelectedPriority(e.target.value)}
-            sx={{ width: "300px" }}
-          >
-            <MenuItem value="">All priorities</MenuItem>
-            {priorities.map((p) => (
-              <MenuItem key={p} value={p}>
-                {p}
+            <Select
+              value={selectedPriority}
+              onChange={(e) => setSelectedPriority(e.target.value)}
+              sx={{ width: "300px" }}
+              displayEmpty
+            >
+              <MenuItem value="">
+                <em>Select priority</em>
               </MenuItem>
-            ))}
-          </Select>
-        </Box>
+              {priorities.map((p) => (
+                <MenuItem key={p} value={p}>
+                  {p}
+                </MenuItem>
+              ))}
+            </Select>
+          </Box>
+        )}
         {lists.length > 0 ? (
           <IconButton
             sx={{ marginLeft: "auto" }}
@@ -301,11 +310,15 @@ function App() {
         <Box sx={{ ...flexRow, gap: 2 }}>
           {lists.map((list) => {
             const filteredTasks = list.tasks
-              .filter((task) =>
-                selectedType ? task.type === selectedType : true,
+              .filter((task) => !selectedType || task.type === selectedType)
+              .filter(
+                (task) =>
+                  !selectedPriority || task.priority === selectedPriority,
               )
-              .filter((task) =>
-                selectedPriority ? task.priority === selectedPriority : true,
+              .sort(
+                (a, b) =>
+                  priorities.indexOf(a.priority!) -
+                  priorities.indexOf(b.priority!),
               );
 
             return (

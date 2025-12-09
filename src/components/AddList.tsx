@@ -11,8 +11,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useDrop } from "react-dnd";
 import AddTask, { ItemTypes } from "./AddTask";
 import TaskModal from "./TaskModal";
-import { Task } from "../App";
 import { useState } from "react";
+import { type AddListProps } from "../types/list.types";
 
 export const ListItemTypes = { BOARDLIST: "boardList" };
 
@@ -21,30 +21,6 @@ export const singleLineEllipsis = {
   whiteSpace: "nowrap",
   overflow: "hidden",
   textOverflow: "ellipsis",
-};
-
-type AddListProps = {
-  list: { id: number; tasks: Task[]; name?: string };
-  moveTask: (...args: any[]) => void;
-  addTask: (
-    listId: number,
-    name: string,
-    description?: string,
-    type?: string,
-    priority?: string,
-  ) => void;
-  deleteTask: (listId: number, taskId: number) => void;
-  deleteList: (listId: number) => void;
-  updateTask: (
-    listId: number,
-    taskId: number,
-    newName: string,
-    newDescription: string,
-    newType?: string,
-    newPriority?: string,
-  ) => void;
-  taskTypes: string[];
-  priorities: string[];
 };
 
 function AddList({
@@ -110,6 +86,8 @@ function AddList({
               updateTask={updateTask}
               type={task.type}
               priority={task.priority}
+              taskTypes={taskTypes}
+              priorities={priorities}
             />
           ))}
         </Box>

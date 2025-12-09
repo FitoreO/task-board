@@ -5,29 +5,36 @@ import {
   TextField,
   DialogActions,
   Button,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import { useState } from "react";
-
-type TaskEditModalProps = {
-  open: boolean;
-  initialName?: string;
-  initialDescription?: string;
-  onClose: () => void;
-  onSubmit: (newName: string, newDescription: string) => void;
-};
+import { type TaskEditModalProps } from "../types/task.types";
 
 export default function UpdateTaskModal({
   open,
   initialName,
   initialDescription,
+  initialTaskType,
+  initialPriority,
   onClose,
   onSubmit,
+  taskTypes,
+  priorities,
 }: TaskEditModalProps) {
-  const [name, setName] = useState(initialName ?? "");
-  const [description, setDescription] = useState(initialDescription ?? "");
+  const [name, setName] = useState<string>(initialName ?? "");
+  const [description, setDescription] = useState<string>(
+    initialDescription ?? "",
+  );
   const [errorUpdateNameText, setErrorUpdateNameText] = useState<string>("");
   const [errorUpdateDescriptionText, setErrorUpdateDescriptionText] =
     useState<string>("");
+  const [selectedTaskType, setSelectedTaskType] = useState<string>(
+    initialTaskType ?? "",
+  );
+  const [selectedPriority, setSelectedPriority] = useState<string>(
+    initialPriority ?? "",
+  );
 
   return (
     <Dialog open={open} onClose={onClose}>
@@ -65,6 +72,31 @@ export default function UpdateTaskModal({
           error={!!errorUpdateDescriptionText}
           helperText={errorUpdateDescriptionText}
         />
+        <Select
+          fullWidth
+          value={selectedTaskType}
+          onChange={(e) => setSelectedTaskType(e.target.value)}
+          sx={{ mb: 2 }}
+        >
+          {taskTypes.map((type) => (
+            <MenuItem key={type} value={type}>
+              {type}
+            </MenuItem>
+          ))}
+        </Select>
+
+        <Select
+          fullWidth
+          value={selectedPriority}
+          onChange={(e) => setSelectedPriority(e.target.value)}
+          sx={{ mb: 2 }}
+        >
+          {priorities.map((priority) => (
+            <MenuItem key={priority} value={priority}>
+              {priority}
+            </MenuItem>
+          ))}
+        </Select>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
@@ -78,7 +110,7 @@ export default function UpdateTaskModal({
               setErrorUpdateDescriptionText("Description is required");
               return;
             }
-            onSubmit(name, description);
+            onSubmit(name, description, selectedTaskType, selectedPriority);
             onClose();
             setErrorUpdateNameText("");
             setErrorUpdateDescriptionText("");

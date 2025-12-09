@@ -64,15 +64,7 @@ router.get("/", async (req, res) => {
       },
     });
 
-    // Autosortering på prio
-    const priorityOrder = ["Critical", "High", "Medium", "Low"];
-    const sortedTasks = tasks.sort(
-      (a, b) =>
-        priorityOrder.indexOf(a.priority ?? "Low") -
-        priorityOrder.indexOf(b.priority ?? "Low"),
-    );
-
-    res.json(sortedTasks);
+    res.json(tasks);
   } catch (error: any) {
     res.status(400).json({ error: error.message });
   }

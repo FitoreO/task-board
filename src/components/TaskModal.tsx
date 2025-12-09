@@ -8,18 +8,8 @@ import {
   Select,
 } from "@mui/material";
 import { useState } from "react";
-
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
+import { type TaskModalType } from "../types/task.types";
+import { StyledModalBox } from "./StyledModalBox";
 
 export default function TaskModal({
   open,
@@ -27,22 +17,11 @@ export default function TaskModal({
   onSubmit,
   taskTypes,
   priorities,
-}: {
-  open: boolean;
-  onClose: () => void;
-  onSubmit: (
-    name: string,
-    description: string,
-    type: string,
-    priority: string,
-  ) => void;
-  taskTypes: string[];
-  priorities: string[];
-}) {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [selectedTaskType, setSelectedTaskType] = useState("");
-  const [selectedPriority, setSelectedPriority] = useState("");
+}: TaskModalType) {
+  const [name, setName] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [selectedTaskType, setSelectedTaskType] = useState<string>("");
+  const [selectedPriority, setSelectedPriority] = useState<string>("");
 
   const handleSubmit = () => {
     if (!name.trim() || !description.trim()) return;
@@ -56,9 +35,8 @@ export default function TaskModal({
 
   return (
     <Modal open={open} onClose={onClose}>
-      <Box sx={style}>
+      <StyledModalBox>
         <Typography variant="h6">Create a task</Typography>
-
         <TextField
           placeholder="Name"
           value={name}
@@ -67,7 +45,6 @@ export default function TaskModal({
           sx={{ mb: 2, mt: 1 }}
           required
         />
-
         <TextField
           placeholder="Description"
           value={description}
@@ -78,37 +55,42 @@ export default function TaskModal({
           rows={2}
           required
         />
-
         <Select
           fullWidth
           value={selectedTaskType}
           onChange={(e) => setSelectedTaskType(e.target.value)}
           sx={{ mb: 2 }}
+          displayEmpty
         >
+          <MenuItem value="">
+            <em>Select a type</em>
+          </MenuItem>
           {taskTypes.map((type) => (
             <MenuItem key={type} value={type}>
               {type}
             </MenuItem>
           ))}
         </Select>
-
         <Select
           fullWidth
           value={selectedPriority}
           onChange={(e) => setSelectedPriority(e.target.value)}
           sx={{ mb: 2 }}
+          displayEmpty
         >
+          <MenuItem value="">
+            <em>Select priority</em>
+          </MenuItem>
           {priorities.map((priority) => (
             <MenuItem key={priority} value={priority}>
               {priority}
             </MenuItem>
           ))}
         </Select>
-
         <Button variant="contained" onClick={handleSubmit} fullWidth>
           Submit
         </Button>
-      </Box>
+      </StyledModalBox>
     </Modal>
   );
 }
