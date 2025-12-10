@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum TaskType {
+  Bug
+  Story
+  Epic
+  Feature
+}
+
+enum Priority {
+  Critical
+  High
+  Medium
+  Low
+}
+
+
+model User {
+  id       Int     @id @default(autoincrement())
+  email    String  @unique
+  name     String?
+  password String
+  lists    List[]
+}
+
+model List {
+  id     Int    @id @default(autoincrement())
+  name   String
+  userId Int
+  user   User   @relation(fields: [userId], references: [id])
+  tasks  Task[]
+}
+
+model Task {
+  id          Int     @id @default(autoincrement())
+  name        String?
+  description String?
+  listId      Int
+  list        List    @relation(fields: [listId], references: [id],  onDelete: Cascade)
+  type        TaskType?
+  priority    Priority?
+}
