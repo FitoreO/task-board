@@ -1,7 +1,28 @@
 import { Router } from "express";
 import { prisma } from "../prisma";
+import bcrypt from "bcrypt";
+import { setCookie } from "../utils/setCookie";
 
 const router = Router();
+
+router.post("/signup", async (req, res) => {
+  const { name, email, password } = req.body;
+
+  try {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const user = await prisma.user.create({
+      data: { name, email, password: hashedPassword },
+    });
+
+    setCookie(res, user.id);
+    const { password: _, ...safeUser } = user;
+    res.status(201).json(safeUser);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
@@ -13,19 +34,30 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
-    if (user.password !== password) {
-      return res.status(401).json({ error: "Invalid email or password" });
+    const isCorrectPassword = await bcrypt.compare(password, user.password);
+    if (!isCorrectPassword) {
+      console.log("Invalid credentials");
+      return res.status(403).json({ error: "Invalid email or password" });
     }
-
     // Success: return user info (omit password)
-    res.json({
-      id: user.id,
-      email: user.email,
-      name: user.name,
-    });
+    setCookie(res, user.id);
+    const { password: _, ...safeUser } = user;
+    res.status(200).json(safeUser);
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
+});
+
+router.post("/logout", async (req, res) => {
+  res
+    .clearCookie("token", {
+      path: "/",
+      maxAge: 0,
+      httpOnly: true,
+      sameSite: "strict",
+      secure: process.env.NODE_ENV !== "development",
+    })
+    .end();
 });
 
 export default router;

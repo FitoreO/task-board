@@ -1,43 +1,39 @@
-import { Button, TextField, Typography, Stack } from "@mui/material";
+import { Box, Button, Stack, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 
-export default function LoginForm({
-  onLoginSuccess,
-}: {
-  onLoginSuccess: () => void;
-}) {
+export default function SignupForm() {
+  const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     try {
-      const res = await fetch("http://localhost:3000/users/login", {
+      const res = await fetch("http://localhost:3000/users/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ name, email, password }),
         credentials: "include",
       });
       const data = await res.json();
 
-      if (res.ok) {
-        sessionStorage.setItem("user", JSON.stringify(data));
-        onLoginSuccess();
-      } else {
-        console.error("Login failed:", data.error);
-      }
+      return data;
     } catch (err) {
-      console.error("Error:", err);
+      console.error("Error", err);
     }
   };
 
   return (
-    <form
-      onSubmit={onSubmit}
-      style={{ width: "300px", margin: "5rem auto 1rem auto" }}
-    >
+    <form onSubmit={onSubmit} style={{ width: "300px", margin: "5rem auto" }}>
       <Stack spacing={2}>
-        <Typography sx={{ textAlign: "center" }}>Please log in</Typography>
+        <Typography sx={{ textAlign: "center" }}>Please Sign Up</Typography>
+        <TextField
+          type="text"
+          placeholder="Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
         <TextField
           type="email"
           placeholder="Email"
@@ -50,7 +46,7 @@ export default function LoginForm({
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <Button type="submit">Sign in</Button>
+        <Button type="submit">Sign up</Button>
       </Stack>
     </form>
   );

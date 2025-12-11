@@ -5,11 +5,10 @@ const router = Router();
 
 // Get all lists for a user, including their tasks
 
-router.get("/:userId", async (req, res) => {
-  const userId = parseInt(req.params.userId, 10);
+router.get("/", async (req, res) => {
   try {
     const lists = await prisma.list.findMany({
-      where: { userId },
+      where: { userId: (req as any).userId },
       include: { tasks: true },
     });
     res.json(lists);
@@ -19,10 +18,10 @@ router.get("/:userId", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-  const { name, userId } = req.body;
+  const { name } = req.body;
   try {
     const list = await prisma.list.create({
-      data: { name, userId },
+      data: { name, userId: (req as any).userId },
     });
     res.json(list);
   } catch (error: any) {

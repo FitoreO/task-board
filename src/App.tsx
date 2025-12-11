@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   Box,
+  Button,
   IconButton,
   MenuItem,
   Paper,
@@ -12,6 +13,9 @@ import AddIcon from "@mui/icons-material/Add";
 import LoginForm from "./components/LoginForm";
 import ListModal from "./components/ListModal";
 import { type TaskList } from "./types/task.types";
+import SignupForm from "./components/SignupForm";
+import { handleLogout } from "./components/hooks/handleLogout";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 export const flexColumn = {
   display: "flex",
@@ -27,11 +31,9 @@ function App() {
   const [lists, setLists] = useState<TaskList[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-  // Keeping login info in sessionStorage so it sticks while the tab is open.
-  // Temporary solution until a proper logout flow is implemented.
-  const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    return !!sessionStorage.getItem("user");
-  });
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const [showSignup, setShowSignup] = useState(false);
   const [taskTypes, setTaskTypes] = useState<string[]>([]);
   const [priorities, setPriorities] = useState<string[]>([]);
 
@@ -42,12 +44,15 @@ function App() {
 
   useEffect(() => {
     if (isLoggedIn) {
-      // Fetch all lists for the logged-in user from backend
-      fetch(`http://localhost:3000/lists/${user.id}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setLists(data);
+      fetch("http://localhost:3000/lists", {
+        method: "GET",
+        credentials: "include",
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("Unauthorized");
+          return res.json();
         })
+        .then((data) => setLists(data))
         .catch((err) => console.error("Failed to load lists:", err));
     }
   }, [isLoggedIn]);
@@ -73,7 +78,8 @@ function App() {
       const res = await fetch("http://localhost:3000/lists", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, userId: user.id }),
+        credentials: "include",
+        body: JSON.stringify({ name }),
       });
 
       if (!res.ok) {
@@ -93,6 +99,7 @@ function App() {
     try {
       const res = await fetch(`http://localhost:3000/lists/${id}`, {
         method: "DELETE",
+        credentials: "include",
       });
 
       if (!res.ok) throw new Error("Failed to delete list");
@@ -115,6 +122,7 @@ function App() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, description, listId, type, priority }),
+        credentials: "include",
       });
 
       if (!res.ok) {
@@ -148,6 +156,7 @@ function App() {
       const res = await fetch(`http://localhost:3000/tasks/${taskId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({
           name: newName,
           description: newDescription,
@@ -180,6 +189,7 @@ function App() {
     try {
       const res = await fetch(`http://localhost:3000/tasks/${taskId}`, {
         method: "DELETE",
+        credentials: "include",
       });
 
       if (!res.ok) throw new Error("Failed to delete task");
@@ -206,6 +216,7 @@ function App() {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ targetListId, targetIndex }),
+      credentials: "include",
     });
 
     if (!res.ok) throw new Error("Failed to move task");
@@ -235,6 +246,7 @@ function App() {
         "& > :not(style)": { marginLeft: "auto", marginRight: "auto" },
       }}
     >
+      <Button onClick={() => handleLogout({ setIsLoggedIn })}>Log out</Button>
       <Paper
         elevation={5}
         sx={{
@@ -348,7 +360,26 @@ function App() {
       </Paper>
     </Box>
   ) : (
-    <LoginForm onLoginSuccess={() => setIsLoggedIn(true)} />
+    <>
+      {!showSignup ? (
+        <Box sx={{ ...flexColumn, mx: "auto" }}>
+          <LoginForm onLoginSuccess={() => setIsLoggedIn(true)} />
+          <Button
+            onClick={() => setShowSignup(true)}
+            sx={{ textTransform: "none" }}
+          >
+            Don't have an account yet? Sign up here
+          </Button>
+        </Box>
+      ) : (
+        <Box sx={{ ...flexColumn, mx: "auto" }}>
+          {/* <IconButton onClick={() => setShowSignup(false)}>
+            <ArrowBackIcon />
+          </IconButton> */}
+          <SignupForm />
+        </Box>
+      )}
+    </>
   );
 }
 export default App;
