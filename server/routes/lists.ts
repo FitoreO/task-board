@@ -8,7 +8,7 @@ const router = Router();
 router.get("/", async (req, res) => {
   try {
     const lists = await prisma.list.findMany({
-      where: { userId: (req as any).userId },
+      where: { userId: req.userId },
       include: { tasks: true },
     });
     res.json(lists);
@@ -21,7 +21,7 @@ router.post("/", async (req, res) => {
   const { name } = req.body;
   try {
     const list = await prisma.list.create({
-      data: { name, userId: (req as any).userId },
+      data: { name, userId: req.userId! },
     });
     res.json(list);
   } catch (error: any) {
