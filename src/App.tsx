@@ -6,6 +6,7 @@ import {
   MenuItem,
   Paper,
   Select,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import AddList from "./components/AddList";
@@ -15,6 +16,7 @@ import ListModal from "./components/ListModal";
 import { type TaskList } from "./types/task.types";
 import SignupForm from "./components/SignupForm";
 import { handleLogout } from "./components/hooks/handleLogout";
+import LogoutIcon from "@mui/icons-material/Logout";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 export const flexColumn = {
@@ -30,17 +32,28 @@ const flexRow = {
 function App() {
   const [lists, setLists] = useState<TaskList[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
   const [showSignup, setShowSignup] = useState(false);
   const [taskTypes, setTaskTypes] = useState<string[]>([]);
   const [priorities, setPriorities] = useState<string[]>([]);
-
   const [selectedType, setSelectedType] = useState<string>("");
   const [selectedPriority, setSelectedPriority] = useState<string>("");
+  const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState<boolean>(true);
 
-  const user = JSON.parse(sessionStorage.getItem("user")!);
+  useEffect(() => {
+    fetch("http://localhost:3000/users/me", { credentials: "include" })
+      .then((res) => {
+        if (!res.ok) throw new Error("Not logged in");
+        return res.json();
+      })
+      .then((user) => {
+        setUser(user);
+        setIsLoggedIn(true);
+      })
+      .catch(() => setIsLoggedIn(false))
+      .finally(() => setAuthLoading(false));
+  }, []);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -240,13 +253,39 @@ function App() {
 
   const hasTasks = lists.some((list) => list.tasks.length > 0);
 
+  if (authLoading) {
+    return <div>Loading...</div>;
+  }
+
   return isLoggedIn ? (
     <Box
       sx={{
-        "& > :not(style)": { marginLeft: "auto", marginRight: "auto" },
+        display: "flex",
+        flexDirection: "column",
+        width: "100%",
+        margin: "0 auto",
+        alignItems: "center",
       }}
     >
-      <Button onClick={() => handleLogout({ setIsLoggedIn })}>Log out</Button>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "flex-end",
+          width: "100%",
+        }}
+      >
+        <Tooltip title="Log out">
+          <IconButton
+            onClick={() => handleLogout({ setIsLoggedIn })}
+            sx={{ color: "#1976d2" }}
+          >
+            <Typography sx={{ marginRight: "5px", fontSize: "20px" }}>
+              Log Out
+            </Typography>
+            <LogoutIcon />
+          </IconButton>
+        </Tooltip>
+      </Box>
       <Paper
         elevation={5}
         sx={{

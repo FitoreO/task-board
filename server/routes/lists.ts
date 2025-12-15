@@ -8,9 +8,12 @@ const router = Router();
 router.get("/", async (req, res) => {
   try {
     const lists = await prisma.list.findMany({
-      where: { userId: req.userId },
-      include: { tasks: true },
+      include: {
+        tasks: true,
+        creator: { select: { id: true, name: true, email: true } },
+      },
     });
+
     res.json(lists);
   } catch (error: any) {
     res.status(400).json({ error: error.message });
@@ -21,7 +24,14 @@ router.post("/", async (req, res) => {
   const { name } = req.body;
   try {
     const list = await prisma.list.create({
-      data: { name, userId: req.userId! },
+      data: {
+        name,
+        createdBy: req.userId!,
+      },
+      include: {
+        creator: { select: { id: true, name: true, email: true } },
+        tasks: true,
+      },
     });
     res.json(list);
   } catch (error: any) {

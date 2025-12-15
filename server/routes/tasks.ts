@@ -7,7 +7,17 @@ router.post("/", async (req, res) => {
   const { name, description, listId, type, priority } = req.body;
   try {
     const task = await prisma.task.create({
-      data: { name, description, listId, type, priority },
+      data: {
+        name,
+        description,
+        listId,
+        type,
+        priority,
+        createdBy: req.userId,
+      },
+      include: {
+        creator: { select: { id: true, name: true, email: true } },
+      },
     });
     res.json(task);
   } catch (error: any) {
@@ -22,7 +32,11 @@ router.put("/:id", async (req, res) => {
     const updatedTask = await prisma.task.update({
       where: { id },
       data: { name, description, type, priority },
+      include: {
+        creator: { select: { id: true, name: true, email: true } },
+      },
     });
+
     res.json(updatedTask);
   } catch (error: any) {
     res.status(400).json({ error: error.message });

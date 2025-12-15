@@ -21,7 +21,6 @@ export default function LoginForm({
       const data = await res.json();
 
       if (res.ok) {
-        sessionStorage.setItem("user", JSON.stringify(data));
         onLoginSuccess();
       } else {
         console.error("Login failed:", data.error);

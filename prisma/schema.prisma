@@ -28,22 +28,28 @@ model User {
   name     String?
   password String
   lists    List[]
+  tasks    Task[]  @relation("UserTasks") 
 }
 
 model List {
   id     Int    @id @default(autoincrement())
   name   String
-  userId Int
-  user   User   @relation(fields: [userId], references: [id])
+  createdBy  Int?     
+  creator    User?    @relation(fields: [createdBy], references: [id])
+  createdAt  DateTime @default(now())
   tasks  Task[]
 }
 
 model Task {
-  id          Int     @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   name        String?
   description String?
   listId      Int
-  list        List    @relation(fields: [listId], references: [id],  onDelete: Cascade)
+  list        List     @relation(fields: [listId], references: [id], onDelete: Cascade)
   type        TaskType?
   priority    Priority?
+  createdBy   Int?
+  creator     User?    @relation("UserTasks", fields: [createdBy], references: [id])
+  createdAt   DateTime @default(now())
 }
+
