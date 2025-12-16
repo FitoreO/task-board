@@ -4,6 +4,13 @@ export type Task = {
   description?: string;
   type?: string;
   priority?: string;
+  createdBy?: number;
+  creator?: {
+    id: number;
+    name: string | null;
+    email: string;
+  };
+  createdAt: string;
 };
 
 export type TaskList = {
@@ -30,6 +37,13 @@ export type AddTaskProps = {
     newDescription: string,
     newType?: string,
     newPriority?: string,
+    createdBy?: number,
+    createdAt?: string,
+    creator?: {
+      id: number;
+      name: string | null;
+      email: string;
+    },
   ) => void;
   name?: string;
   description?: string;
@@ -37,6 +51,13 @@ export type AddTaskProps = {
   priority?: string;
   taskTypes: string[];
   priorities: string[];
+  createdBy?: number;
+  creator?: {
+    id: number;
+    name: string | null;
+    email: string;
+  };
+  createdAt?: string;
 };
 
 export type TaskModalType = {
@@ -47,6 +68,13 @@ export type TaskModalType = {
     description: string,
     type: string,
     priority: string,
+    createdBy?: number,
+    createdAt?: string,
+    creator?: {
+      id: number;
+      name: string | null;
+      email: string;
+    },
   ) => void;
   taskTypes: string[];
   priorities: string[];
@@ -64,6 +92,13 @@ export type TaskEditModalProps = {
     newDescription: string,
     newType?: string,
     newPriority?: string,
+    updatedBy?: number,
+    updatedCreator?: {
+      id: number;
+      name: string | null;
+      email: string;
+    },
+    updatedAt?: string,
   ) => void;
 
   taskTypes: string[];

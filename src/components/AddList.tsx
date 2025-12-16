@@ -90,6 +90,9 @@ function AddList({
               priority={task.priority}
               taskTypes={taskTypes}
               priorities={priorities}
+              creator={task.creator}
+              createdBy={task.createdBy}
+              createdAt={task.createdAt}
             />
           ))}
         </Box>

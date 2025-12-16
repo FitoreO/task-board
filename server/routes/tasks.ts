@@ -5,6 +5,7 @@ const router = Router();
 
 router.post("/", async (req, res) => {
   const { name, description, listId, type, priority } = req.body;
+
   try {
     const task = await prisma.task.create({
       data: {

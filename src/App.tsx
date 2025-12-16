@@ -17,7 +17,6 @@ import { type TaskList } from "./types/task.types";
 import SignupForm from "./components/SignupForm";
 import { handleLogout } from "./components/hooks/handleLogout";
 import LogoutIcon from "@mui/icons-material/Logout";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 export const flexColumn = {
   display: "flex",
@@ -134,7 +133,13 @@ function App() {
       const res = await fetch("http://localhost:3000/tasks", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, description, listId, type, priority }),
+        body: JSON.stringify({
+          name,
+          description,
+          listId,
+          type,
+          priority,
+        }),
         credentials: "include",
       });
 
@@ -144,6 +149,7 @@ function App() {
       }
 
       const newTask = await res.json();
+      console.log("New task from backend:", newTask);
 
       setLists((prev) =>
         prev.map((list) =>
@@ -164,6 +170,13 @@ function App() {
     newDescription: string,
     newType?: string,
     newPriority?: string,
+    updatedBy?: number,
+    updatedCreator?: {
+      id: number;
+      name: string | null;
+      email: string;
+    },
+    updatedAt?: string,
   ) => {
     try {
       const res = await fetch(`http://localhost:3000/tasks/${taskId}`, {
@@ -175,6 +188,9 @@ function App() {
           description: newDescription,
           type: newType,
           priority: newPriority,
+          createdBy: updatedBy,
+          creator: updatedCreator,
+          createdAt: updatedAt,
         }),
       });
 

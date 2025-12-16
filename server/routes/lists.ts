@@ -9,7 +9,11 @@ router.get("/", async (req, res) => {
   try {
     const lists = await prisma.list.findMany({
       include: {
-        tasks: true,
+        tasks: {
+          include: {
+            creator: { select: { id: true, name: true, email: true } },
+          },
+        },
         creator: { select: { id: true, name: true, email: true } },
       },
     });

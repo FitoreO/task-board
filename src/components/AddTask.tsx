@@ -7,6 +7,7 @@ import { useState } from "react";
 import { singleLineEllipsis } from "./AddList";
 import { type AddTaskProps } from "../types/task.types";
 import { flexColumn } from "../App";
+import PersonIcon from "@mui/icons-material/Person";
 
 export const ItemTypes = { BOARDTASK: "boardtask" };
 
@@ -21,6 +22,9 @@ function AddTask({
   priority,
   taskTypes,
   priorities,
+  createdAt,
+  createdBy,
+  creator,
 }: AddTaskProps) {
   //makes task draggable between lists
   const { isDragging, drag } = useBoardDrag(ItemTypes.BOARDTASK, {
@@ -106,6 +110,20 @@ function AddTask({
           </Box>
         </Box>
         <Typography sx={{ fontSize: "12px" }}>{description}</Typography>
+        {creator && (
+          <Tooltip title={`Created by: ${creator.name}`}>
+            <IconButton
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                marginLeft: "auto",
+                marginRight: "-10px",
+              }}
+            >
+              <PersonIcon />
+            </IconButton>
+          </Tooltip>
+        )}
       </Card>
       <UpdateTaskModal
         open={isEditOpen}
