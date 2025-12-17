@@ -14,20 +14,7 @@ import AddIcon from "@mui/icons-material/Add";
 import ListModal from "./ListModal";
 import { handleLogout } from "./hooks/handleLogout";
 import LogoutIcon from "@mui/icons-material/Logout";
-
-export const flexColumn = {
-  display: "flex",
-  flexDirection: "column",
-};
-
-const flexRow = {
-  display: "flex",
-  flexDirection: "row",
-};
-
-interface KanbanBoardProps {
-  setIsLoggedIn: (val: boolean) => void;
-}
+import { flexColumn, flexEnd, flexRow } from "../styles/flex";
 
 function KanbanBoard({ setIsLoggedIn }: KanbanBoardProps) {
   const {
@@ -49,7 +36,7 @@ function KanbanBoard({ setIsLoggedIn }: KanbanBoardProps) {
     updateTaskHandler,
     deleteTaskHandler,
     moveTaskHandler,
-  } = useKanban();
+  } = useKanban(true);
 
   const hasTasks = lists.some((list) => list.tasks.length > 0);
 
@@ -61,8 +48,7 @@ function KanbanBoard({ setIsLoggedIn }: KanbanBoardProps) {
   return (
     <Box
       sx={{
-        display: "flex",
-        flexDirection: "column",
+        ...flexColumn,
         width: "100%",
         margin: "0 auto",
         alignItems: "center",
@@ -70,8 +56,7 @@ function KanbanBoard({ setIsLoggedIn }: KanbanBoardProps) {
     >
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "flex-end",
+          ...flexEnd,
           width: "100%",
         }}
       >
@@ -101,8 +86,7 @@ function KanbanBoard({ setIsLoggedIn }: KanbanBoardProps) {
           <Box
             sx={{
               ...flexRow,
-              marginLeft: "auto",
-              marginRight: "auto",
+              mx: "auto",
               gap: 2,
             }}
           >
@@ -140,8 +124,7 @@ function KanbanBoard({ setIsLoggedIn }: KanbanBoardProps) {
         )}
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "flex-end",
+            ...flexEnd,
             width: "100%",
             paddingLeft: 2,
           }}

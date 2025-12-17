@@ -6,8 +6,8 @@ import UpdateTaskModal from "./UpdateTaskModal";
 import { useState } from "react";
 import { singleLineEllipsis } from "./AddList";
 import { type AddTaskProps } from "../types/task.types";
-import { flexColumn } from "./KanbanBoard";
 import PersonIcon from "@mui/icons-material/Person";
+import { flexColumn } from "../styles/flex";
 
 export const ItemTypes = { BOARDTASK: "boardtask" };
 
@@ -112,8 +112,7 @@ function AddTask({
           <Tooltip title={`Created by: ${creator.name}`}>
             <IconButton
               sx={{
-                display: "flex",
-                flexDirection: "column",
+                ...flexColumn,
                 marginLeft: "auto",
                 marginRight: "-10px",
               }}
@@ -131,14 +130,7 @@ function AddTask({
         initialPriority={priority}
         onClose={() => setIsEditOpen(false)}
         onSubmit={(newName, newDescription, newType, newPriority) => {
-          updateTask(
-            sourceListId,
-            id,
-            newName,
-            newDescription,
-            newType,
-            newPriority,
-          );
+          updateTask(id, newName, newDescription, newType, newPriority);
           setIsEditOpen(false);
         }}
         taskTypes={taskTypes}

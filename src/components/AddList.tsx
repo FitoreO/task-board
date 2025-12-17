@@ -75,7 +75,6 @@ function AddList({
             </IconButton>
           </ButtonGroup>
         </Box>
-
         <Box>
           {list.tasks.map((task) => (
             <AddTask

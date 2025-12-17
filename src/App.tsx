@@ -3,9 +3,9 @@ import KanbanBoard from "./components/KanbanBoard";
 import AuthView from "./components/AuthView";
 
 function App() {
-  const [showSignup, setShowSignup] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [authLoading, setAuthLoading] = useState(true);
+  const [showSignup, setShowSignup] = useState<boolean>(false);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [authLoading, setAuthLoading] = useState<boolean>(true);
 
   // Kör bara auth check
   useEffect(() => {
@@ -15,7 +15,12 @@ function App() {
         return res.json();
       })
       .then(() => setIsLoggedIn(true))
-      .catch(() => setIsLoggedIn(false))
+      .catch((err) => {
+        if (!err.message.includes("Not logged in")) {
+          console.error("Auth check failed:", err);
+        }
+        setIsLoggedIn(false);
+      })
       .finally(() => setAuthLoading(false));
   }, []);
 

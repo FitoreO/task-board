@@ -22,8 +22,6 @@ export function authMiddleware(
         ? decoded.id
         : parseInt(decoded.id as any, 10);
 
-    console.log("Set req.userId to:", (req as any).userId);
-
     next();
   } catch (err) {
     console.error("JWT verification error:", err);

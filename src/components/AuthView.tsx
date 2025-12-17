@@ -1,13 +1,7 @@
 import { Box, Button } from "@mui/material";
 import LoginForm from "./LoginForm";
 import SignupForm from "./SignupForm";
-import { flexColumn } from "./KanbanBoard";
-
-interface AuthViewProps {
-  showSignup: boolean;
-  setShowSignup: (val: boolean) => void;
-  setIsLoggedIn: (val: boolean) => void;
-}
+import { flexColumn } from "../styles/flex";
 
 function AuthView({ showSignup, setShowSignup, setIsLoggedIn }: AuthViewProps) {
   return !showSignup ? (

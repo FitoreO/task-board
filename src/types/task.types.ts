@@ -29,19 +29,11 @@ export type AddTaskProps = {
   sourceListId: number;
   deleteTask: (listId: number, taskId: number) => void;
   updateTask: (
-    listId: number,
     taskId: number,
     newName: string,
     newDescription: string,
     newType?: string,
     newPriority?: string,
-    createdBy?: number,
-    createdAt?: string,
-    creator?: {
-      id: number;
-      name: string | null;
-      email: string;
-    },
   ) => void;
   name?: string;
   description?: string;

@@ -13,7 +13,6 @@ export type AddListProps = {
   deleteTask: (listId: number, taskId: number) => void;
   deleteList: (listId: number) => void;
   updateTask: (
-    listId: number,
     taskId: number,
     newName: string,
     newDescription: string,
