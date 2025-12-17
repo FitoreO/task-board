@@ -5,11 +5,14 @@ Task management application built with React, Express, and Prisma.
 ## Features
 
 - User authentication with login
+- Secure password hashing with bcrypt
 - CRUD operations for lists and tasks
 - Drag-and-drop tasks between lists
 - Task descriptions and details
 - Autosorting based on priority level
-- Ability to filter tasks by type and/or priority
+- Ability to filter tasks by type and/or priority or user
+- WebSocket for real-time updates
+- Middleware for authentication, validation, and error handling
 
 ## Tech Stack
 
@@ -19,12 +22,15 @@ Task management application built with React, Express, and Prisma.
 - **Vite**
 - **Material UI (MUI)**
 - **React DnD**
+- **Socket.IO Client**
 
 ### Backend
 
 - **Express**
 - **Prisma**
 - **SQLite**
+- **Socket.IO Server**
+- **bcrypt**
 
 ## Installation
 
