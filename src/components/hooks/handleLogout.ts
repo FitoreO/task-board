@@ -1,16 +1,16 @@
 type Logout = {
-  setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsLoggedIn: (val: boolean) => void;
 };
 
 export const handleLogout = async ({ setIsLoggedIn }: Logout) => {
   try {
     const res = await fetch("http://localhost:3000/users/logout", {
       method: "POST",
-      credentials: "include", // 👈 ensures cookies are sent
+      credentials: "include",
     });
 
     if (res.ok) {
-      setIsLoggedIn(false); // update UI state
+      setIsLoggedIn(false);
     } else {
       console.error("Logout failed");
     }

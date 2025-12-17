@@ -6,7 +6,7 @@ import UpdateTaskModal from "./UpdateTaskModal";
 import { useState } from "react";
 import { singleLineEllipsis } from "./AddList";
 import { type AddTaskProps } from "../types/task.types";
-import { flexColumn } from "../App";
+import { flexColumn } from "./KanbanBoard";
 import PersonIcon from "@mui/icons-material/Person";
 
 export const ItemTypes = { BOARDTASK: "boardtask" };
@@ -22,8 +22,6 @@ function AddTask({
   priority,
   taskTypes,
   priorities,
-  createdAt,
-  createdBy,
   creator,
 }: AddTaskProps) {
   //makes task draggable between lists

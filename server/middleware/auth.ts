@@ -17,12 +17,6 @@ export function authMiddleware(
       process.env.JWT_SECRET as string,
     ) as JwtPayload & { id: number };
 
-    // Add debug logging temporarily
-    console.log("Decoded JWT:", decoded);
-    console.log("User ID type:", typeof decoded.id);
-    console.log("User ID value:", decoded.id);
-
-    // Ensure it's a number
     (req as any).userId =
       typeof decoded.id === "number"
         ? decoded.id

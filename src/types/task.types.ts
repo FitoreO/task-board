@@ -17,13 +17,11 @@ export type TaskList = {
   id: number;
   name: string;
   tasks: Task[];
-  createdBy?: number;
   creator?: {
     id: number;
     name: string | null;
     email: string;
   };
-  createdAt: string;
 };
 
 export type AddTaskProps = {

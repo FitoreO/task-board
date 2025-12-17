@@ -73,4 +73,21 @@ router.post("/logout", async (req, res) => {
     .end();
 });
 
+router.get("/all-users", authMiddleware, async (req, res) => {
+  try {
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        lists: true,
+        tasks: true,
+      },
+    });
+    res.json(users);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;
