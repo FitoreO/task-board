@@ -75,5 +75,5 @@ export const useKanbanSocket = (
     return () => {
       socket.disconnect();
     };
-  }, [isLoggedIn, setLists, onNotification]);
+  }, [isLoggedIn]);
 };
