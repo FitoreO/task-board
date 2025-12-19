@@ -13,15 +13,9 @@ import AddTask, { ItemTypes } from "./AddTask";
 import TaskModal from "./TaskModal";
 import { useState } from "react";
 import { type AddListProps } from "../types/list.types";
+import { singleLineEllipsis } from "../styles/flex";
 
 export const ListItemTypes = { BOARDLIST: "boardList" };
-
-export const singleLineEllipsis = {
-  textTransform: "capitalize",
-  whiteSpace: "nowrap",
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-};
 
 function AddList({
   list,

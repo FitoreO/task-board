@@ -1,4 +1,4 @@
-import { Box, Button, Typography, Modal, TextField } from "@mui/material";
+import { Button, Typography, Modal, TextField } from "@mui/material";
 import { useState } from "react";
 import { type ListModalType } from "../types/list.types";
 import { StyledModalBox } from "./StyledModalBox";

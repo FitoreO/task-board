@@ -4,10 +4,9 @@ import EditIcon from "@mui/icons-material/Edit";
 import { useBoardDrag } from "./hooks/useBoardDrag";
 import UpdateTaskModal from "./UpdateTaskModal";
 import { useState } from "react";
-import { singleLineEllipsis } from "./AddList";
 import { type AddTaskProps } from "../types/task.types";
 import PersonIcon from "@mui/icons-material/Person";
-import { flexColumn } from "../styles/flex";
+import { flexColumn, singleLineEllipsis } from "../styles/flex";
 
 export const ItemTypes = { BOARDTASK: "boardtask" };
 

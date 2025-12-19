@@ -12,3 +12,10 @@ export const flexEnd = {
   display: "flex",
   justifyContent: "flex-end",
 };
+
+export const singleLineEllipsis = {
+  textTransform: "capitalize",
+  whiteSpace: "nowrap",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+};
