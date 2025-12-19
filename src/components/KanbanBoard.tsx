@@ -1,26 +1,44 @@
-import { useKanban } from "./hooks/useKanban";
+// KanbanBoard.tsx - ENKEL VERSION
+
 import {
-  Avatar,
   Box,
   IconButton,
-  MenuItem,
-  Paper,
-  Select,
   Tooltip,
   Typography,
+  Paper,
+  MenuItem,
+  Select,
+  Avatar,
 } from "@mui/material";
-import AddList from "./AddList";
 import AddIcon from "@mui/icons-material/Add";
-import ListModal from "./ListModal";
-import { handleLogout } from "./hooks/handleLogout";
 import LogoutIcon from "@mui/icons-material/Logout";
+
+import { useKanbanLists } from "./hooks/useKanbanLists";
+import { useKanbanTasks } from "./hooks/useKanbanTasks";
+import { useKanbanSocket } from "./hooks/useKanbanSocket";
+
+import { handleLogout } from "./hooks/handleLogout";
 import { flexColumn, flexEnd, flexRow } from "../styles/flex";
 
+import AddList from "./AddList";
+import ListModal from "./ListModal";
+import LoadingSpinner from "./LoadingSpinner";
+import ShowSnackbar from "./ShowSnackbar";
+import { useKanbanMetadata } from "./hooks/useKanbanMeta";
+import { useState } from "react";
+
 function KanbanBoard({ setIsLoggedIn }: KanbanBoardProps) {
+  const { lists, setLists, isLoading, addListHandler, deleteListHandler } =
+    useKanbanLists(true);
+
   const {
-    lists,
-    isModalOpen,
-    setIsModalOpen,
+    addTaskHandler,
+    updateTaskHandler,
+    deleteTaskHandler,
+    moveTaskHandler,
+  } = useKanbanTasks();
+
+  const {
     taskTypes,
     priorities,
     selectedType,
@@ -30,20 +48,23 @@ function KanbanBoard({ setIsLoggedIn }: KanbanBoardProps) {
     allUsers,
     selectedUser,
     setSelectedUser,
-    addListHandler,
-    deleteListHandler,
-    addTaskHandler,
-    updateTaskHandler,
-    deleteTaskHandler,
-    moveTaskHandler,
-  } = useKanban(true);
+  } = useKanbanMetadata(true);
+
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
+  const [snackbarMessage, setSnackbarMessage] = useState<string>("");
+
+  // Socket
+  useKanbanSocket(true, setLists, (message) => {
+    setSnackbarMessage(message);
+    setSnackbarOpen(true);
+  });
 
   const hasTasks = lists.some((list) => list.tasks.length > 0);
 
-  const getAvatarColor = (userId: number) => {
-    const hue = (userId * 137) % 360;
-    return `hsl(${hue}, 60%, 70%)`;
-  };
+  if (isLoading) {
+    return <LoadingSpinner message="Loading your boards..." />;
+  }
 
   return (
     <Box
@@ -54,12 +75,7 @@ function KanbanBoard({ setIsLoggedIn }: KanbanBoardProps) {
         alignItems: "center",
       }}
     >
-      <Box
-        sx={{
-          ...flexEnd,
-          width: "100%",
-        }}
-      >
+      <Box sx={{ ...flexEnd, width: "100%" }}>
         <Tooltip title="Log out">
           <IconButton
             onClick={() => handleLogout({ setIsLoggedIn })}
@@ -83,13 +99,7 @@ function KanbanBoard({ setIsLoggedIn }: KanbanBoardProps) {
         }}
       >
         {hasTasks && (
-          <Box
-            sx={{
-              ...flexRow,
-              mx: "auto",
-              gap: 2,
-            }}
-          >
+          <Box sx={{ ...flexRow, mx: "auto", gap: 2 }}>
             <Select
               value={selectedType}
               onChange={(e) => setSelectedType(e.target.value)}
@@ -122,13 +132,8 @@ function KanbanBoard({ setIsLoggedIn }: KanbanBoardProps) {
             </Select>
           </Box>
         )}
-        <Box
-          sx={{
-            ...flexEnd,
-            width: "100%",
-            paddingLeft: 2,
-          }}
-        >
+
+        <Box sx={{ ...flexEnd, width: "100%", paddingLeft: 2 }}>
           {allUsers.map((user, index) => {
             const initials = user.name
               ? user.name
@@ -136,25 +141,47 @@ function KanbanBoard({ setIsLoggedIn }: KanbanBoardProps) {
                   .map((n) => n[0])
                   .join("")
               : "?";
+            const isSelected = selectedUser === user.id;
 
             return (
               <Tooltip key={user.id} title={user.name}>
                 <Avatar
                   sx={{
-                    bgcolor: getAvatarColor(user.id),
+                    bgcolor: `hsl(${(user.id * 137) % 360}, 60%, 70%)`,
                     cursor: "pointer",
-                    border: "2px solid white",
+                    border: isSelected
+                      ? "3px solid #1976d2"
+                      : "2px solid white",
                     marginLeft: index === 0 ? 0 : -1.5,
                     width: "30px",
                     height: "30px",
+                    fontSize: "14px",
                   }}
                   onClick={() => setSelectedUser(user.id)}
                 >
-                  {initials}
+                  {initials.toUpperCase()}
                 </Avatar>
               </Tooltip>
             );
           })}
+          <Tooltip title="All users">
+            <Avatar
+              sx={{
+                bgcolor: selectedUser === "" ? "#1976d2" : "#e0e0e0",
+                cursor: "pointer",
+                border:
+                  selectedUser === "" ? "3px solid #1976d2" : "2px solid white",
+                marginLeft: selectedUser === 0 ? 0 : -1.5,
+                width: "30px",
+                height: "30px",
+                fontSize: "14px",
+                fontWeight: "bold",
+              }}
+              onClick={() => setSelectedUser("")}
+            >
+              ALL
+            </Avatar>
+          </Tooltip>
         </Box>
         {lists.length > 0 ? (
           <IconButton
@@ -164,13 +191,7 @@ function KanbanBoard({ setIsLoggedIn }: KanbanBoardProps) {
             <AddIcon sx={{ width: "30px", height: "30px" }} />
           </IconButton>
         ) : (
-          <Box
-            sx={{
-              margin: "auto",
-              ...flexColumn,
-              alignItems: "center",
-            }}
-          >
+          <Box sx={{ margin: "auto", ...flexColumn, alignItems: "center" }}>
             <Typography sx={{ mb: 1, fontSize: "26px" }}>
               Add a new list
             </Typography>
@@ -195,7 +216,6 @@ function KanbanBoard({ setIsLoggedIn }: KanbanBoardProps) {
                   priorities.indexOf(a.priority!) -
                   priorities.indexOf(b.priority!),
               );
-
             return (
               <AddList
                 key={list.id}
@@ -211,13 +231,17 @@ function KanbanBoard({ setIsLoggedIn }: KanbanBoardProps) {
             );
           })}
         </Box>
-
         <ListModal
           open={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onSubmit={addListHandler}
         />
       </Paper>
+      <ShowSnackbar
+        open={snackbarOpen}
+        message={snackbarMessage}
+        onClose={() => setSnackbarOpen(false)}
+      />
     </Box>
   );
 }

@@ -7,3 +7,7 @@ interface AuthViewProps {
 interface KanbanBoardProps {
   setIsLoggedIn: (val: boolean) => void;
 }
+
+interface MessageProp {
+  message?: string;
+}

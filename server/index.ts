@@ -34,11 +34,11 @@ app.use("/users", usersRouter);
 app.use("/lists", authMiddleware, listsRouter);
 app.use("/tasks", authMiddleware, tasksRouter(io));
 
-app.get("/task-types", (req, res) => {
+app.get("/task-types", (_req, res) => {
   res.json(Object.values(TaskType));
 });
 
-app.get("/priorities", (req, res) => {
+app.get("/priorities", (_req, res) => {
   res.json(Object.values(Priority));
 });
 

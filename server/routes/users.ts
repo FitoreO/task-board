@@ -17,7 +17,6 @@ router.post("/signup", async (req, res) => {
       data: { name, email, password: hashedPassword },
     });
 
-    setCookie(res, user.id);
     const { password: _, ...safeUser } = user;
     res.status(201).json(safeUser);
   } catch (error: any) {
@@ -61,7 +60,7 @@ router.get("/me", authMiddleware, async (req, res) => {
   }
 });
 
-router.post("/logout", async (req, res) => {
+router.post("/logout", async (_req, res) => {
   res
     .clearCookie("token", {
       path: "/",
@@ -73,7 +72,7 @@ router.post("/logout", async (req, res) => {
     .end();
 });
 
-router.get("/all-users", authMiddleware, async (req, res) => {
+router.get("/all-users", authMiddleware, async (_req, res) => {
   try {
     const users = await prisma.user.findMany({
       select: {

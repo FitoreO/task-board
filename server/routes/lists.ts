@@ -5,7 +5,7 @@ const router = Router();
 
 // Get all lists for a user, including their tasks
 
-router.get("/", async (req, res) => {
+router.get("/", async (_req, res) => {
   try {
     const lists = await prisma.list.findMany({
       include: {

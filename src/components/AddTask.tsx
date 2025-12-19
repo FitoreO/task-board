@@ -100,7 +100,13 @@ function AddTask({
               <EditIcon sx={{ fontSize: "1.2rem" }} />
             </IconButton>
             <IconButton
-              onClick={() => deleteTask(sourceListId, id)}
+              onClick={() => {
+                if (
+                  window.confirm("Are you sure you want to delete this task?")
+                ) {
+                  deleteTask(sourceListId, id);
+                }
+              }}
               sx={{ p: 0 }}
             >
               <DeleteIcon sx={{ fontSize: "1.2rem" }} />
