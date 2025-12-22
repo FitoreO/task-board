@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import KanbanBoard from "./components/KanbanBoard";
 import AuthView from "./components/AuthView";
+import { useNavigate } from "react-router-dom";
 
 function App() {
-  const [showSignup, setShowSignup] = useState<boolean>(false);
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [authLoading, setAuthLoading] = useState<boolean>(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [authLoading, setAuthLoading] = useState(true);
 
-  // Kör bara auth check
+  const navigate = useNavigate();
+
   useEffect(() => {
     fetch("http://localhost:3000/users/me", { credentials: "include" })
       .then((res) => {
@@ -15,28 +15,17 @@ function App() {
         return res.json();
       })
       .then(() => setIsLoggedIn(true))
-      .catch((err) => {
-        if (!err.message.includes("Not logged in")) {
-          console.error("Auth check failed:", err);
-        }
-        setIsLoggedIn(false);
-      })
+      .catch(() => setIsLoggedIn(false))
       .finally(() => setAuthLoading(false));
   }, []);
 
-  if (authLoading) {
-    return <div>Loading...</div>;
-  }
+  useEffect(() => {
+    if (isLoggedIn) navigate("/kanban");
+  }, [isLoggedIn]);
 
-  return isLoggedIn ? (
-    <KanbanBoard setIsLoggedIn={setIsLoggedIn} />
-  ) : (
-    <AuthView
-      showSignup={showSignup}
-      setShowSignup={setShowSignup}
-      setIsLoggedIn={setIsLoggedIn}
-    />
-  );
+  if (authLoading) return <div>Loading...</div>;
+
+  return !isLoggedIn && <AuthView setIsLoggedIn={setIsLoggedIn} />;
 }
 
 export default App;

@@ -14,7 +14,6 @@ import TaskModal from "./TaskModal";
 import { useState } from "react";
 import { type AddListProps } from "../types/list.types";
 import { singleLineEllipsis } from "../styles/flex";
-
 export const ListItemTypes = { BOARDLIST: "boardList" };
 
 function AddList({
@@ -38,11 +37,12 @@ function AddList({
   }));
 
   return (
-    <div ref={drop as unknown as React.Ref<HTMLDivElement>}>
-      <Card
-        sx={{ width: 150, height: 550, p: 1, backgroundColor: "#f9f9f9" }}
-        elevation={2}
-      >
+    <div
+      ref={(el) => {
+        drop(el);
+      }}
+    >
+      <Card sx={{ width: 150, height: 550, p: 1 }} elevation={2}>
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Tooltip title={list.name}>
             <Typography

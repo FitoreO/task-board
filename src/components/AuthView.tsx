@@ -1,22 +1,20 @@
 import { Box, Button } from "@mui/material";
 import LoginForm from "./LoginForm";
-import SignupForm from "./SignupForm";
 import { flexColumn } from "../styles/flex";
+import { useNavigate } from "react-router-dom";
 
-function AuthView({ showSignup, setShowSignup, setIsLoggedIn }: AuthViewProps) {
-  return !showSignup ? (
+function AuthView({ setIsLoggedIn }: { setIsLoggedIn: (v: boolean) => void }) {
+  const navigate = useNavigate();
+
+  return (
     <Box sx={{ ...flexColumn, mx: "auto" }}>
       <LoginForm onLoginSuccess={() => setIsLoggedIn(true)} />
       <Button
-        onClick={() => setShowSignup(true)}
+        onClick={() => navigate("/signup")}
         sx={{ textTransform: "none" }}
       >
         Don't have an account yet? Sign up here
       </Button>
-    </Box>
-  ) : (
-    <Box sx={{ ...flexColumn, mx: "auto" }}>
-      <SignupForm />
     </Box>
   );
 }

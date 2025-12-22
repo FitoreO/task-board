@@ -39,7 +39,11 @@ function AddTask({
   };
 
   return (
-    <div ref={drag as unknown as React.Ref<HTMLDivElement>}>
+    <div
+      ref={(el) => {
+        drag(el);
+      }}
+    >
       <Card
         sx={{
           opacity: isDragging ? 0.5 : 1,
@@ -49,7 +53,6 @@ function AddTask({
           mx: "auto",
           ...flexColumn,
           p: 1,
-          backgroundColor: isDragging ? "#dbd7cfff" : "#fff",
         }}
       >
         <Box

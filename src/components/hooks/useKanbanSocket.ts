@@ -73,6 +73,10 @@ export const useKanbanSocket = (
     });
 
     return () => {
+      socket.off("taskCreated");
+      socket.off("taskUpdated");
+      socket.off("taskDeleted");
+      socket.off("taskMoved");
       socket.disconnect();
     };
   }, [isLoggedIn]);

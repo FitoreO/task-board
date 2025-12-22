@@ -12,14 +12,12 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import LogoutIcon from "@mui/icons-material/Logout";
-
 import { useKanbanLists } from "./hooks/useKanbanLists";
 import { useKanbanTasks } from "./hooks/useKanbanTasks";
 import { useKanbanSocket } from "./hooks/useKanbanSocket";
-
 import { handleLogout } from "./hooks/handleLogout";
 import { flexColumn, flexEnd, flexRow } from "../styles/flex";
-
+import { useNavigate } from "react-router-dom";
 import AddList from "./AddList";
 import ListModal from "./ListModal";
 import LoadingSpinner from "./LoadingSpinner";
@@ -60,10 +58,18 @@ function KanbanBoard({ setIsLoggedIn }: KanbanBoardProps) {
     setSnackbarOpen(true);
   });
 
+  const navigate = useNavigate();
+
+  const logout = () => {
+    handleLogout({ setIsLoggedIn }).then(() => {
+      navigate("/");
+    });
+  };
+
   const hasTasks = lists.some((list) => list.tasks.length > 0);
 
   if (isLoading) {
-    return <LoadingSpinner message="Loading your boards..." />;
+    return <LoadingSpinner message="Loading your tasks..." />;
   }
 
   return (
@@ -77,10 +83,7 @@ function KanbanBoard({ setIsLoggedIn }: KanbanBoardProps) {
     >
       <Box sx={{ ...flexEnd, width: "100%" }}>
         <Tooltip title="Log out">
-          <IconButton
-            onClick={() => handleLogout({ setIsLoggedIn })}
-            sx={{ color: "#1976d2" }}
-          >
+          <IconButton onClick={logout} sx={{ color: "#1976d2" }}>
             <Typography sx={{ marginRight: "5px", fontSize: "20px" }}>
               Log Out
             </Typography>
