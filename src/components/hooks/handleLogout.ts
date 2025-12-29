@@ -1,20 +1,23 @@
-type Logout = {
-  setIsLoggedIn: (val: boolean) => void;
-};
+import { useSetAtom } from "jotai";
+import { isLoggedInAtom } from "../atoms";
 
-export const handleLogout = async ({ setIsLoggedIn }: Logout) => {
-  try {
-    const res = await fetch("http://localhost:3000/users/logout", {
-      method: "POST",
-      credentials: "include",
-    });
+export const useHandleLogout = () => {
+  const setIsLoggedIn = useSetAtom(isLoggedInAtom);
 
-    if (res.ok) {
-      setIsLoggedIn(false);
-    } else {
-      console.error("Logout failed");
+  return async () => {
+    try {
+      const res = await fetch("http://localhost:3000/users/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      if (res.ok) {
+        setIsLoggedIn(false);
+      } else {
+        console.error("Logout failed");
+      }
+    } catch (err) {
+      console.error("Error logging out:", err);
     }
-  } catch (err) {
-    console.error("Error logging out:", err);
-  }
+  };
 };

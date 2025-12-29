@@ -11,13 +11,10 @@ import {
   Avatar,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import LogoutIcon from "@mui/icons-material/Logout";
 import { useKanbanLists } from "./hooks/useKanbanLists";
 import { useKanbanTasks } from "./hooks/useKanbanTasks";
 import { useKanbanSocket } from "./hooks/useKanbanSocket";
-import { handleLogout } from "./hooks/handleLogout";
 import { flexColumn, flexEnd, flexRow } from "../styles/flex";
-import { useNavigate } from "react-router-dom";
 import AddList from "./AddList";
 import ListModal from "./ListModal";
 import LoadingSpinner from "./LoadingSpinner";
@@ -25,7 +22,7 @@ import ShowSnackbar from "./ShowSnackbar";
 import { useKanbanMetadata } from "./hooks/useKanbanMeta";
 import { useState } from "react";
 
-function KanbanBoard({ setIsLoggedIn }: KanbanBoardProps) {
+function KanbanBoard() {
   const { lists, setLists, isLoading, addListHandler, deleteListHandler } =
     useKanbanLists(true);
 
@@ -58,14 +55,6 @@ function KanbanBoard({ setIsLoggedIn }: KanbanBoardProps) {
     setSnackbarOpen(true);
   });
 
-  const navigate = useNavigate();
-
-  const logout = () => {
-    handleLogout({ setIsLoggedIn }).then(() => {
-      navigate("/login");
-    });
-  };
-
   const hasTasks = lists.some((list) => list.tasks.length > 0);
 
   if (isLoading) {
@@ -79,19 +68,8 @@ function KanbanBoard({ setIsLoggedIn }: KanbanBoardProps) {
         width: "100%",
         margin: "0 auto",
         alignItems: "center",
-        backgroundColor: "background.default",
       }}
     >
-      <Box sx={{ ...flexEnd, width: "100%" }}>
-        <Tooltip title="Log out">
-          <IconButton onClick={logout} sx={{ color: "#84a3c2ff" }}>
-            <Typography sx={{ marginRight: "5px", fontSize: "20px" }}>
-              Log Out
-            </Typography>
-            <LogoutIcon />
-          </IconButton>
-        </Tooltip>
-      </Box>
       <Paper
         elevation={5}
         sx={{
@@ -137,7 +115,7 @@ function KanbanBoard({ setIsLoggedIn }: KanbanBoardProps) {
           </Box>
         )}
 
-        <Box sx={{ ...flexEnd, width: "100%", paddingLeft: 2 }}>
+        <Box sx={{ ...flexEnd, width: "100%", paddingLeft: 2, paddingTop: 2 }}>
           {allUsers.map((user, index) => {
             const initials = user.name
               ? user.name
@@ -146,7 +124,6 @@ function KanbanBoard({ setIsLoggedIn }: KanbanBoardProps) {
                   .join("")
               : "?";
             const isSelected = selectedUser === user.id;
-
             return (
               <Tooltip key={user.id} title={user.name}>
                 <Avatar
@@ -178,8 +155,7 @@ function KanbanBoard({ setIsLoggedIn }: KanbanBoardProps) {
                 marginLeft: selectedUser === 0 ? 0 : -1.5,
                 width: "30px",
                 height: "30px",
-                fontSize: "14px",
-                fontWeight: "bold",
+                fontSize: "12px",
               }}
               onClick={() => setSelectedUser("")}
             >

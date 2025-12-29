@@ -27,7 +27,13 @@ export default function SignupForm() {
 
   return (
     <Box>
-      <form onSubmit={onSubmit} style={{ width: "300px", margin: "5rem auto" }}>
+      <form
+        onSubmit={onSubmit}
+        style={{
+          width: "300px",
+          margin: "5rem auto",
+        }}
+      >
         <Stack spacing={2}>
           <Typography sx={{ textAlign: "center" }}>Please Sign Up</Typography>
           <TextField

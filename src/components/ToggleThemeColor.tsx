@@ -15,29 +15,20 @@ export function ToggleThemeColor({
     <Box
       sx={{
         display: "flex",
-        width: "100%",
-        alignItems: "right",
-        justifyContent: "right",
-        bgcolor: "background.default",
+        justifyContent: "flex-end",
         color: "text.primary",
         borderRadius: 1,
-        minHeight: "56px",
+        minHeight: "46px",
+        width: "100%",
+        marginTop: "5px",
       }}
     >
       <FormControl>
-        <Box>
-          {mode === "light" && (
-            <IconButton onClick={() => setMode("dark")}>
-              <ModeNightIcon />
-            </IconButton>
-          )}
-
-          {mode === "dark" && (
-            <IconButton onClick={() => setMode("light")}>
-              <LightModeIcon />
-            </IconButton>
-          )}
-        </Box>
+        <IconButton
+          onClick={() => setMode(mode === "light" ? "dark" : "light")}
+        >
+          {mode === "light" ? <ModeNightIcon /> : <LightModeIcon />}
+        </IconButton>
       </FormControl>
     </Box>
   );

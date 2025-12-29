@@ -46,9 +46,10 @@ function AddTask({
     >
       <Card
         sx={{
+          position: "relative",
           opacity: isDragging ? 0.5 : 1,
           width: 130,
-          height: 80,
+          height: 100,
           mt: 1,
           mx: "auto",
           ...flexColumn,
@@ -83,6 +84,7 @@ function AddTask({
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            gap: 0.5,
           }}
         >
           <Tooltip title={name}>
@@ -97,7 +99,7 @@ function AddTask({
               {name}
             </Typography>
           </Tooltip>
-          <Box sx={{ marginTop: "-5px" }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
             <IconButton onClick={() => setIsEditOpen(true)} sx={{ p: 0 }}>
               <EditIcon sx={{ fontSize: "1.2rem" }} />
             </IconButton>
@@ -115,14 +117,26 @@ function AddTask({
             </IconButton>
           </Box>
         </Box>
-        <Typography sx={{ fontSize: "12px" }}>{description}</Typography>
+        <Typography
+          sx={{
+            fontSize: "12px",
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          {description}
+        </Typography>
         {creator && (
           <Tooltip title={`Created by: ${creator.name}`}>
             <IconButton
               sx={{
-                ...flexColumn,
-                marginLeft: "auto",
-                marginRight: "-10px",
+                position: "absolute",
+                bottom: 4,
+                right: 4,
+                p: 0.25,
               }}
             >
               <PersonIcon />

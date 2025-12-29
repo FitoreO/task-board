@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import AuthView from "./components/AuthView";
+import { isLoggedInAtom } from "./components/atoms";
+import { useAtom } from "jotai";
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useAtom(isLoggedInAtom);
+
   const [authLoading, setAuthLoading] = useState(true);
 
   useEffect(() => {
@@ -18,7 +21,7 @@ function App() {
 
   if (authLoading) return <div>Loading...</div>;
 
-  return !isLoggedIn && <AuthView setIsLoggedIn={setIsLoggedIn} />;
+  return !isLoggedIn && <AuthView />;
 }
 
 export default App;

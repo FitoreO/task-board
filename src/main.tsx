@@ -1,25 +1,26 @@
-import { useState } from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import { BrowserRouter } from "react-router";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { AppRoutes } from "./routes/AppRoutes";
-import { createTheme, ThemeProvider } from "@mui/material";
-import { ToggleThemeColor } from "./components/ToggleThemeColor";
+import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
+import { useAtomValue } from "jotai";
+import { modeAtom } from "./components/atoms";
+import ButtonAppBar from "./components/Header";
 
 function AppWithTheme() {
-  const [mode, setMode] = useState<"light" | "dark">("light");
-
+  const mode = useAtomValue(modeAtom);
   const theme = createTheme({
     palette: { mode },
   });
 
   return (
     <ThemeProvider theme={theme}>
+      <CssBaseline />
       <BrowserRouter>
         <DndProvider backend={HTML5Backend}>
-          <ToggleThemeColor setMode={setMode} mode={mode} />
+          <ButtonAppBar />
           <AppRoutes />
         </DndProvider>
       </BrowserRouter>

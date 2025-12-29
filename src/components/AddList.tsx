@@ -42,7 +42,7 @@ function AddList({
         drop(el);
       }}
     >
-      <Card sx={{ width: 150, height: 550, p: 1 }} elevation={2}>
+      <Card sx={{ width: 150, height: 500, p: 1 }} elevation={2}>
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Tooltip title={list.name}>
             <Typography
