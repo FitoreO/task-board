@@ -50,7 +50,6 @@ export const useKanbanLists = (isLoggedIn: boolean) => {
       });
 
       if (!res.ok) throw new Error("Failed to delete list");
-
       setLists((prev) => prev.filter((list) => list.id !== id));
     } catch (err) {
       console.error("Failed to delete list:", err);

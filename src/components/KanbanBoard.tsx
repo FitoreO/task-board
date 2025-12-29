@@ -62,7 +62,7 @@ function KanbanBoard({ setIsLoggedIn }: KanbanBoardProps) {
 
   const logout = () => {
     handleLogout({ setIsLoggedIn }).then(() => {
-      navigate("/");
+      navigate("/login");
     });
   };
 
@@ -79,11 +79,12 @@ function KanbanBoard({ setIsLoggedIn }: KanbanBoardProps) {
         width: "100%",
         margin: "0 auto",
         alignItems: "center",
+        backgroundColor: "background.default",
       }}
     >
       <Box sx={{ ...flexEnd, width: "100%" }}>
         <Tooltip title="Log out">
-          <IconButton onClick={logout} sx={{ color: "#1976d2" }}>
+          <IconButton onClick={logout} sx={{ color: "#84a3c2ff" }}>
             <Typography sx={{ marginRight: "5px", fontSize: "20px" }}>
               Log Out
             </Typography>

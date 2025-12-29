@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
 import AuthView from "./components/AuthView";
-import { useNavigate } from "react-router-dom";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     fetch("http://localhost:3000/users/me", { credentials: "include" })
@@ -18,10 +15,6 @@ function App() {
       .catch(() => setIsLoggedIn(false))
       .finally(() => setAuthLoading(false));
   }, []);
-
-  useEffect(() => {
-    if (isLoggedIn) navigate("/kanban");
-  }, [isLoggedIn]);
 
   if (authLoading) return <div>Loading...</div>;
 

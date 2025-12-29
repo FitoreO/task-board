@@ -3,12 +3,21 @@ import LoginForm from "./LoginForm";
 import { flexColumn } from "../styles/flex";
 import { useNavigate } from "react-router-dom";
 
-function AuthView({ setIsLoggedIn }: { setIsLoggedIn: (v: boolean) => void }) {
+function AuthView({
+  setIsLoggedIn,
+}: {
+  setIsLoggedIn: (value: boolean) => void;
+}) {
   const navigate = useNavigate();
 
   return (
     <Box sx={{ ...flexColumn, mx: "auto" }}>
-      <LoginForm onLoginSuccess={() => setIsLoggedIn(true)} />
+      <LoginForm
+        onLoginSuccess={() => {
+          setIsLoggedIn(true);
+          navigate("/kanban");
+        }}
+      />
       <Button
         onClick={() => navigate("/signup")}
         sx={{ textTransform: "none" }}
