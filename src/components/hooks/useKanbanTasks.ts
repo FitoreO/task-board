@@ -5,6 +5,7 @@ export const useKanbanTasks = () => {
     description?: string,
     type?: string,
     priority?: string,
+    createdAt?: Date,
   ) => {
     try {
       const res = await fetch("http://localhost:3000/tasks", {
@@ -16,6 +17,7 @@ export const useKanbanTasks = () => {
           listId,
           type,
           priority,
+          createdAt,
         }),
         credentials: "include",
       });

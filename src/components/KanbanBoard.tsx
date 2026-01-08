@@ -1,5 +1,3 @@
-// KanbanBoard.tsx - ENKEL VERSION
-
 import {
   Box,
   IconButton,
@@ -9,6 +7,7 @@ import {
   MenuItem,
   Select,
   Avatar,
+  Button,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useKanbanLists } from "./hooks/useKanbanLists";
@@ -21,6 +20,8 @@ import LoadingSpinner from "./LoadingSpinner";
 import ShowSnackbar from "./ShowSnackbar";
 import { useKanbanMetadata } from "./hooks/useKanbanMeta";
 import { useState } from "react";
+import { useAtomValue } from "jotai";
+import { isLoggedInAtom } from "./atoms";
 
 function KanbanBoard() {
   const { lists, setLists, isLoading, addListHandler, deleteListHandler } =
@@ -48,6 +49,7 @@ function KanbanBoard() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>("");
+  const isLoggedIn = useAtomValue(isLoggedInAtom);
 
   // Socket
   useKanbanSocket(true, setLists, (message) => {
@@ -59,6 +61,22 @@ function KanbanBoard() {
 
   if (isLoading) {
     return <LoadingSpinner message="Loading your tasks..." />;
+  }
+
+  if (!isLoggedIn) {
+    return (
+      <Box
+        sx={{
+          ...flexColumn,
+          justifyContent: "center",
+          mt: "2rem",
+          fontStyle: "italic",
+        }}
+      >
+        <Typography>No Access. Please log in</Typography>
+        <Button>Log in</Button>
+      </Box>
+    );
   }
 
   return (

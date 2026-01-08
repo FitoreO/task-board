@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { type User } from "../../types/user.types";
+import { type Task } from "../../types/task.types";
 
 export const useKanbanMetadata = (isLoggedIn: boolean) => {
   const [taskTypes, setTaskTypes] = useState<string[]>([]);
@@ -8,6 +9,7 @@ export const useKanbanMetadata = (isLoggedIn: boolean) => {
   const [selectedPriority, setSelectedPriority] = useState<string>("");
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<number | "">("");
+  const [allTasks, setAllTasks] = useState<Task[]>([]);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -35,6 +37,13 @@ export const useKanbanMetadata = (isLoggedIn: boolean) => {
       .catch((err) => console.error("Failed to load priorities:", err));
   }, []);
 
+  useEffect(() => {
+    fetch("http://localhost:3000/tasks", { credentials: "include" })
+      .then((res) => res.json())
+      .then(setAllTasks)
+      .catch((err) => console.error("Failed to load all tasks:", err));
+  }, []);
+
   return {
     taskTypes,
     priorities,
@@ -45,5 +54,6 @@ export const useKanbanMetadata = (isLoggedIn: boolean) => {
     allUsers,
     selectedUser,
     setSelectedUser,
+    allTasks,
   };
 };
